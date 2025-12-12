@@ -271,6 +271,7 @@ function traverseIteration(node) {
   return result;
 }
 
+
 // implement DFS by traversing tree InOrder
 function traverseInorder(node, list) {
   if (node.left) {
@@ -302,7 +303,19 @@ function traversePreorder(node, list) {
 }
 
 // implement DFS by traversing tree PostOrder
-function traversePostorder(node, list) {}
+function traversePostorder(node, list) {
+  if (node.left) {
+    traversePostorder(node.left, list);
+  }
+
+  if (node.right) {
+    traversePostorder(node.right, list);
+  }
+
+  list.push(node.value);
+
+  return list
+}
 
 // ==== TEST Tree 1 ====
 const tree = new BinarySearchTree();
@@ -315,7 +328,8 @@ tree.insert(9).insert(4).insert(6).insert(20).insert(170).insert(15).insert(1);
 
 // Test if DFS works
 // console.log(tree.DFSInorder());
-console.log(tree.DFSPreorder());
+// console.log(tree.DFSPreorder());
+console.log(tree.DFSPostorder());
 
 // Test if BFS works
 // console.log(tree.breadthFirstSearch());
