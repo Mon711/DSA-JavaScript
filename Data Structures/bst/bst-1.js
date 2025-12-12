@@ -217,11 +217,10 @@ class BinarySearchTree {
     return traversePreorder(this.root, []);
   }
 
-  DFSPreorder() {
+  DFSPostorder() {
     return traversePostorder(this.root, []);
   }
 }
-
 
 // implement traversing the tree using recursion
 function traverseRecursion(node) {
@@ -274,18 +273,36 @@ function traverseIteration(node) {
 
 // implement DFS by traversing tree InOrder
 function traverseInorder(node, list) {
-  if (node.left){
-    traverseInorder(node.left, list)
+  if (node.left) {
+    traverseInorder(node.left, list);
   }
 
-  list.push(node.value)
+  list.push(node.value);
 
-   if (node.right){
-    traverseInorder(node.right, list)
+  if (node.right) {
+    traverseInorder(node.right, list);
   }
 
   return list;
 }
+
+// implement DFS by traversing tree PreOrder
+function traversePreorder(node, list) {
+  list.push(node.value);
+
+  if (node.left) {
+    traversePreorder(node.left, list);
+  }
+
+  if (node.right) {
+    traversePreorder(node.right, list);
+  }
+
+  return list;
+}
+
+// implement DFS by traversing tree PostOrder
+function traversePostorder(node, list) {}
 
 // ==== TEST Tree 1 ====
 const tree = new BinarySearchTree();
@@ -297,10 +314,8 @@ tree.insert(9).insert(4).insert(6).insert(20).insert(170).insert(15).insert(1);
 // 1  6 15 170
 
 // Test if DFS works
-console.log(tree.DFSInorder());
-
-
-
+// console.log(tree.DFSInorder());
+console.log(tree.DFSPreorder());
 
 // Test if BFS works
 // console.log(tree.breadthFirstSearch());
