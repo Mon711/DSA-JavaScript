@@ -1,6 +1,7 @@
 // ====================
 // Node (BST building block)
 // ====================
+// A single node in the tree. Each node stores a value and pointers to left/right children.
 class Node {
   constructor(value) {
     this.left = null;
@@ -12,12 +13,14 @@ class Node {
 // ====================
 // Binary Search Tree (BST)
 // ====================
+// A BST keeps values ordered: left subtree values are <= node, right subtree values are > node.
+// This makes search/insert/remove efficient on average.
 class BinarySearchTree {
   constructor() {
     this.root = null;
   }
 
-  // Insert a value into the BST
+  // Insert a value into the BST (returns the tree for chaining)
   insert(value) {
     const newNode = new Node(value);
 
@@ -51,7 +54,7 @@ class BinarySearchTree {
     }
   }
 
-  // Check if a value exists in the BST
+  // Check whether a value exists in the BST (true/false)
   lookup(value) {
     if (!this.root) {
       return false;
@@ -74,7 +77,7 @@ class BinarySearchTree {
     return false;
   }
 
-  // Remove a node with the given value from the BST
+  // Remove a value from the BST if it exists (returns the tree)
   remove(value) {
     if (!this.root) {
       console.log("Tree is empty!");
@@ -99,7 +102,7 @@ class BinarySearchTree {
       return null;
     }
 
-    // Case 1: Node has no children (leaf)
+    // Case 1: Leaf node (no children)
     if (!currentNode.left && !currentNode.right) {
       if (!parentNode) {
         this.root = null;
@@ -110,7 +113,7 @@ class BinarySearchTree {
       }
     }
 
-    // Case 2: Node has one child
+    // Case 2a: Only right child
     else if (!currentNode.left) {
       // Node has right child only
       if (!parentNode) {
@@ -120,7 +123,10 @@ class BinarySearchTree {
       } else {
         parentNode.right = currentNode.right;
       }
-    } else if (!currentNode.right) {
+    }
+
+    // Case 2b: Only left child
+    else if (!currentNode.right) {
       // Node has left child only
       if (!parentNode) {
         this.root = currentNode.left;
@@ -131,9 +137,9 @@ class BinarySearchTree {
       }
     }
 
-    // Case 3: Node has two children
+    // Case 3: Two children (replace with in-order successor)
     else {
-      // Find the in-order successor (smallest value in the right subtree)
+      // In-order successor = smallest value in the right subtree
       let successorParent = currentNode;
       let successor = currentNode.right;
 
@@ -156,7 +162,7 @@ class BinarySearchTree {
     return this;
   }
 
-  // Breadth-first search (BFS) traversal (iterative)
+  // BFS traversal (iterative): visits level by level
   breadthFirstSearch() {
     let currentNode = this.root;
     let list = [];
@@ -179,7 +185,7 @@ class BinarySearchTree {
     return list;
   }
 
-  // Breadth-first search (BFS) traversal (recursive)
+  // BFS traversal (recursive): same output as iterative BFS
   breadthFirstSearchRecursive(queue, list) {
     if (queue.length === 0) {
       return list;
@@ -199,15 +205,17 @@ class BinarySearchTree {
     return this.breadthFirstSearchRecursive(queue, list);
   }
 
-  // Depth-first search (DFS) traversals
+  // DFS traversal (in-order): returns values in sorted order
   DFSInorder() {
     return traverseInorder(this.root, []);
   }
 
+  // DFS traversal (pre-order): visits node before its children
   DFSPreorder() {
     return traversePreorder(this.root, []);
   }
 
+  // DFS traversal (post-order): visits node after its children
   DFSPostorder() {
     return traversePostorder(this.root, []);
   }
@@ -216,6 +224,9 @@ class BinarySearchTree {
 // ====================
 // DFS Traversal Helpers (Recursive)
 // ====================
+// These helpers return an array of values by visiting nodes in a specific DFS order.
+
+// In-order: Left -> Node -> Right (sorted order for a BST)
 function traverseInorder(node, list) {
   if (node.left) {
     traverseInorder(node.left, list);
@@ -230,6 +241,7 @@ function traverseInorder(node, list) {
   return list;
 }
 
+// Pre-order: Node -> Left -> Right (useful for copying/serializing structure)
 function traversePreorder(node, list) {
   list.push(node.value);
 
@@ -244,6 +256,7 @@ function traversePreorder(node, list) {
   return list;
 }
 
+// Post-order: Left -> Right -> Node (useful for deleting/freeing nodes)
 function traversePostorder(node, list) {
   if (node.left) {
     traversePostorder(node.left, list);
@@ -261,6 +274,9 @@ function traversePostorder(node, list) {
 // ====================
 // Tree Visualization Helpers (Convert tree to plain objects)
 // ====================
+// These helpers convert the BST into plain JS objects so it prints nicely with JSON.stringify.
+
+// Recursively build a plain-object representation of the tree
 function traverseRecursion(node) {
   const tree = { value: node.value };
   tree.left = node.left === null ? null : traverseRecursion(node.left);
@@ -268,6 +284,7 @@ function traverseRecursion(node) {
   return tree;
 }
 
+// Iteratively build a plain-object representation of the tree (no recursion)
 function traverseIteration(node) {
   if (!node) {
     return null;
@@ -311,10 +328,11 @@ function traverseIteration(node) {
 // ====================
 // Test / Demo
 // ====================
+// Quick sanity checks and examples. Uncomment logs to run different operations.
 const tree = new BinarySearchTree();
 tree.insert(9).insert(4).insert(6).insert(20).insert(170).insert(15).insert(1);
 
-// Tree structure:
+// Reference tree used for the examples below:
 //      9
 //     / \
 //    4   20
@@ -322,26 +340,37 @@ tree.insert(9).insert(4).insert(6).insert(20).insert(170).insert(15).insert(1);
 //  1  6 15 170
 
 // DFS
+// Expected:
+//   In-order   -> [1, 4, 6, 9, 15, 20, 170]
+//   Pre-order  -> [9, 4, 1, 6, 20, 15, 170]
+//   Post-order -> [1, 6, 4, 15, 170, 20, 9]
 // console.log(tree.DFSInorder());
 // console.log(tree.DFSPreorder());
 console.log(tree.DFSPostorder());
 
 // BFS
+// Expected -> [9, 4, 20, 1, 6, 15, 170]
 // console.log(tree.breadthFirstSearch());
 // console.log(tree.breadthFirstSearchRecursive([tree.root], []));
 
 // Visualize
+// Prints the tree structure as nested plain objects
 // console.log("Tree Structure:");
 // console.log(JSON.stringify(traverseRecursion(tree.root), null, 2));
 // console.log(JSON.stringify(traverseIteration(tree.root), null, 2));
 
 // Lookup
+// Expected:
+//   lookup(20) -> true
+//   lookup(1)  -> true
+//   lookup(99) -> false
 // console.log("\nLookup Results:");
 // console.log(tree.lookup(20)); // Should be found
 // console.log(tree.lookup(1));  // Should be found
 // console.log(tree.lookup(99)); // Should NOT be found
 
 // Remove
+// Remove nodes and print updated tree structure
 // tree.remove(20).remove(4).remove(9);
 // console.log("Tree Structure:");
 // console.log(JSON.stringify(traverse(tree.root), null, 2));
